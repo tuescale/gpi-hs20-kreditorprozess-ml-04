@@ -205,10 +205,10 @@ Lieferantendaten:
 - Anzahl Rechnungsreklamationen (creditorInvoiceReclamationCount)</bpmn:documentation>
       <bpmn:extensionElements>
         <camunda:inputOutput>
-          <camunda:outputParameter name="creditorInvoiceReclamationCount">${1}</camunda:outputParameter>
-          <camunda:outputParameter name="creditorOrderCount">${6}</camunda:outputParameter>
+          <camunda:outputParameter name="creditorInvoiceReclamationCount">${3}</camunda:outputParameter>
+          <camunda:outputParameter name="creditorOrderCount">${9}</camunda:outputParameter>
           <camunda:outputParameter name="orderFound">${true}</camunda:outputParameter>
-          <camunda:outputParameter name="orderAmount">${101}</camunda:outputParameter>
+          <camunda:outputParameter name="orderAmount">${12000}</camunda:outputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1y33xl3</bpmn:incoming>
