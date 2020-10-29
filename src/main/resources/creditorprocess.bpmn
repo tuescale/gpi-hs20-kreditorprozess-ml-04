@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0irg7ww" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.2.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0irg7ww" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.3.0">
   <bpmn:collaboration id="Collaboration_06vozgy">
     <bpmn:participant id="SekretariatParticipant" name="Sekretariat" processRef="Process_0npywkb" />
     <bpmn:participant id="ProzessportalParticipant" name="Prozessportal" processRef="Kreditorprozess" />
@@ -109,85 +109,6 @@
         <bpmn:flowNodeRef>RechnungFormellPrufenTask</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
-    <bpmn:startEvent id="RechnungErfasstStartEvent" name="Rechnung erfasst" camunda:asyncAfter="true">
-      <bpmn:documentation>Rechnungsdaten:
-- Rechnungsnummer (invoiceNr)
-- Rechnungsdatum (invoiceDate)
-- Fälligkeitsdatum (dueDate)
-- Lieferantenbezeichnung (creditorName)
-- Referenznummer (referenceNr)
-- Rechnungsbetrag (invoiceAmount)
-
-PDF per FileUpload (invoiceFile)</bpmn:documentation>
-      <bpmn:extensionElements>
-        <camunda:formData>
-          <camunda:formField id="invoiceNr" label="Rechnungsnummer" type="long" />
-          <camunda:formField id="invoiceDate" label="Rechnungsdatum" type="date" />
-          <camunda:formField id="dueDate" label="Fälligkeitsdatum" type="date" />
-          <camunda:formField id="creditorName" label="Lieferantenbezeichnung" type="string" />
-          <camunda:formField id="referenceNr" label="Referenznummer" type="long" />
-          <camunda:formField id="invoiceAmount" label="Rechnungsbetrag" type="long" />
-        </camunda:formData>
-      </bpmn:extensionElements>
-      <bpmn:outgoing>Flow_1y33xl3</bpmn:outgoing>
-    </bpmn:startEvent>
-    <bpmn:exclusiveGateway id="ZugehorigeBestellungGefundenGateway" name="Zugehörige Bestellung gefunden?">
-      <bpmn:incoming>Flow_0tbmtn1</bpmn:incoming>
-      <bpmn:outgoing>JaSequenceFlow</bpmn:outgoing>
-      <bpmn:outgoing>NeinSequenceFlow</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="AutomatischesPrufergebnisGateway" name="Automatisches Prüfergebnis?">
-      <bpmn:incoming>Flow_13frkl1</bpmn:incoming>
-      <bpmn:outgoing>NegativSequenceFlow</bpmn:outgoing>
-      <bpmn:outgoing>PositivSequenceFlow1</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="FormalesPrufergebnisGateway" name="Formales Prüfergebnis?">
-      <bpmn:incoming>Flow_00p9c7f</bpmn:incoming>
-      <bpmn:outgoing>PositivSequenceFlow</bpmn:outgoing>
-      <bpmn:outgoing>NegativSequenceFlow1</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="GesamtBetragGateway" name="Rechnungs-&#10;betrag?">
-      <bpmn:incoming>Flow_0bzaplc</bpmn:incoming>
-      <bpmn:outgoing>CHF100SequenceFlow</bpmn:outgoing>
-      <bpmn:outgoing>CHF100SequenceFlow1</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="Gateway_1iqzvbr">
-      <bpmn:incoming>PositivSequenceFlow</bpmn:incoming>
-      <bpmn:incoming>PositivSequenceFlow1</bpmn:incoming>
-      <bpmn:outgoing>Flow_0bzaplc</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:endEvent id="RechnungFormalAbgelehntEndEvent" name="Rechnung&#10;formal&#10;abgelehnt">
-      <bpmn:incoming>NegativSequenceFlow1</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:exclusiveGateway id="MateriellesPrufergebnisGateway" name="Materielles Prüfergebnis?">
-      <bpmn:incoming>Flow_1hegwq0</bpmn:incoming>
-      <bpmn:outgoing>NegativSequenceFlow2</bpmn:outgoing>
-      <bpmn:outgoing>PositivSequenceFlow2</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:task id="RechnungInERPZurBezahlungErfassenTask" name="Rechnung in ERP zur Bezahlung erfassen">
-      <bpmn:documentation>In Realität natürlich deutlich komplexer, vor allem dann, wenn keine zugehörige Bestellung vorhanden ist. Wir begnügen uns mit folgender Variante:
-
-
-1. Über die ERP-API wird nach einem Lieferant mit der Bezeichnung creditorName gesucht. Zurück kommt die Lieferanten-Id creditorId oder die Meldung, dass kein Lieferant gefunden wurde. Letzteren Fall ignorieren wir -&gt; Exception werfen.
-
-
-2. Wir übergeben der ERP-API eine neue Rechnung mit den Angaben creditorId, invoiceNr, invoiceAmount, invoiceDate.
-
-
-3. Als Antwort erhalten wir eine Erfolgsbestätigung oder Fehlermeldung. Den zweiten Fall ignorieren wir -&gt; Exception werfen.</bpmn:documentation>
-      <bpmn:incoming>Flow_1yye4ye</bpmn:incoming>
-      <bpmn:outgoing>Flow_1swl9v6</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:exclusiveGateway id="Gateway_1jw4fx0">
-      <bpmn:incoming>PositivSequenceFlow2</bpmn:incoming>
-      <bpmn:incoming>CHF100SequenceFlow1</bpmn:incoming>
-      <bpmn:outgoing>Flow_1yye4ye</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="Gateway_10ld1xx">
-      <bpmn:incoming>NegativSequenceFlow</bpmn:incoming>
-      <bpmn:incoming>NeinSequenceFlow</bpmn:incoming>
-      <bpmn:outgoing>Flow_1cneye0</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_1y33xl3" sourceRef="RechnungErfasstStartEvent" targetRef="DatenVonZugehorigerBestellungAuslesenTask" />
     <bpmn:sequenceFlow id="NegativSequenceFlow" name="Negativ" sourceRef="AutomatischesPrufergebnisGateway" targetRef="Gateway_10ld1xx">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!formalCheckResult}</bpmn:conditionExpression>
@@ -227,45 +148,9 @@ PDF per FileUpload (invoiceFile)</bpmn:documentation>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1cneye0" sourceRef="Gateway_10ld1xx" targetRef="RechnungFormellPrufenTask" />
     <bpmn:sequenceFlow id="Flow_1swl9v6" sourceRef="RechnungInERPZurBezahlungErfassenTask" targetRef="Activity_0qrzd9n" />
-    <bpmn:task id="Activity_0qrzd9n" name="Freigabe-bestätigung senden">
-      <bpmn:documentation>Wird umgesetzt mit einem per External Task Pattern eingebundenen Benachrichtungsservice. Hier wird die Kreditorenbuchhaltung per E-Mail benachrichtigt.</bpmn:documentation>
-      <bpmn:incoming>Flow_1swl9v6</bpmn:incoming>
-      <bpmn:outgoing>Flow_0hm1zxz</bpmn:outgoing>
-    </bpmn:task>
     <bpmn:sequenceFlow id="Flow_0hm1zxz" sourceRef="Activity_0qrzd9n" targetRef="RechnungZurZahlungFreigegebenEndEvent" />
-    <bpmn:endEvent id="RechnungZurZahlungFreigegebenEndEvent" name="Rechnung zur Zahlung freigegeben">
-      <bpmn:incoming>Flow_0hm1zxz</bpmn:incoming>
-    </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_0eafodb" sourceRef="Activity_1k5dzl4" targetRef="RechnungMateriellAbgelehntEndEvent" />
-    <bpmn:endEvent id="RechnungMateriellAbgelehntEndEvent" name="Rechnung materiell abgelehnt">
-      <bpmn:incoming>Flow_0eafodb</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:task id="Activity_1k5dzl4" name="Ablehnungs-entscheid miteilen">
-      <bpmn:documentation>Wird umgesetzt mit einem per External Task Pattern eingebundenen Benachrichtungsservice. Hier wird die Kreditorenbuchhaltung per E-Mail benachrichtigt.</bpmn:documentation>
-      <bpmn:incoming>NegativSequenceFlow2</bpmn:incoming>
-      <bpmn:outgoing>Flow_0eafodb</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:task id="DatenVonZugehorigerBestellungAuslesenTask" name="Daten von zugehöriger Bestellung auslesen">
-      <bpmn:documentation>Via REST API zum gemockten ERP. Suche über Referenznummer (referenceNr). Ob eine Bestellung gefunden wurde oder nicht, in Variable orderFound (true/false) ausgeben.
-
-Bestelldaten:
-- Bestellnummer (orderNr)
-- Bestellungsbetrag (orderAmount)
-- Kostenstellenleiter-Kürzel (costCenterMgr)
-
-Lieferantendaten:
-- Anzahl bisheriger Bestellungen (creditorOrderCount)
-- Anzahl Rechnungsreklamationen (creditorInvoiceReclamationCount)</bpmn:documentation>
-      <bpmn:extensionElements>
-        <camunda:inputOutput>
-          <camunda:outputParameter name="orderFound">${true}</camunda:outputParameter>
-          <camunda:outputParameter name="orderAmount">${80}</camunda:outputParameter>
-        </camunda:inputOutput>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1y33xl3</bpmn:incoming>
-      <bpmn:outgoing>Flow_0tbmtn1</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:scriptTask id="RechnungAutomatischFormellPrufenTask" name="Rechnung automatisch formell prüfen" scriptFormat="JavaScript" camunda:resultVariable="formalCheckResult">
+    <bpmn:businessRuleTask id="RechnungAutomatischFormellPrufenTask" name="Rechnung automatisch formell prüfen" camunda:resultVariable="formalCheckResult" camunda:decisionRef="InvoiceAutomaticValidation" camunda:mapDecisionResult="singleEntry">
       <bpmn:documentation>Prüfung basierend auf den Variablen:
 - invoiceAmount
 - Matching von invoiceAmount und orderAmount
@@ -276,11 +161,21 @@ Lieferantendaten:
 Das Ergebnis (automatische Prüfung positiv oder negativ) wird in der Variable formalCheckResult (true/false) gespeichert.</bpmn:documentation>
       <bpmn:incoming>JaSequenceFlow</bpmn:incoming>
       <bpmn:outgoing>Flow_13frkl1</bpmn:outgoing>
-      <bpmn:script>result = false;
-if(invoiceAmount &lt; 100 &amp;&amp; invoiceAmount === orderAmount){
- result = true;
-}</bpmn:script>
-    </bpmn:scriptTask>
+    </bpmn:businessRuleTask>
+    <bpmn:userTask id="RechnungMateriellPrufenTask" name="Rechnung materiell prüfen" camunda:asyncAfter="true" camunda:assignee="${costCenterMgr}">
+      <bpmn:documentation>Aufgabe geht an den Benutzer mit dem Kürzel in costCenterMgr. Dieser prüft anhand der Rechnungsdatei, ob er alle aufgeführten Positionen in ausreichender Qualität erhalten hat.
+
+
+Das Prüfergebnis (positiv oder negativ) wird in der Variable materialCheckResult (true/false) gespeichert. Zudem wird in der Variable materialCheckComments eine Begründung beschrieben, was nicht in Ordnung sei.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="materialCheckResult" label="Prüfergebnis" type="boolean" />
+          <camunda:formField id="materialCheckComments" label="Begründung" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>CHF100SequenceFlow</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hegwq0</bpmn:outgoing>
+    </bpmn:userTask>
     <bpmn:userTask id="RechnungFormellPrufenTask" name="Rechnung formell prüfen" camunda:asyncAfter="true" camunda:candidateGroups="kreditorenbuchhaltung">
       <bpmn:documentation>Mitarbeiter wird händisch im ERP nach einer passenden Bestellung suchen. Falls er keine findet, wird er z.B. versuchen, intern herauszufinden, wer der Auslöser dieser Rechnung ist. Falls auch dies nicht gelingt oder andere formale Fehler in der Rechnung sind (z.B. falsche MwSt.), wird er die Rechnung ablehnen.
 
@@ -297,20 +192,123 @@ Falls das Kostenstellenleiter-Kürzel noch fehlt (keine passende Bestellung), mu
       <bpmn:incoming>Flow_1cneye0</bpmn:incoming>
       <bpmn:outgoing>Flow_00p9c7f</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="RechnungMateriellPrufenTask" name="Rechnung materiell prüfen" camunda:asyncAfter="true" camunda:assignee="${costCenterMgr}">
-      <bpmn:documentation>Aufgabe geht an den Benutzer mit dem Kürzel in costCenterMgr. Dieser prüft anhand der Rechnungsdatei, ob er alle aufgeführten Positionen in ausreichender Qualität erhalten hat.
+    <bpmn:task id="DatenVonZugehorigerBestellungAuslesenTask" name="Daten von zugehöriger Bestellung auslesen">
+      <bpmn:documentation>Via REST API zum gemockten ERP. Suche über Referenznummer (referenceNr). Ob eine Bestellung gefunden wurde oder nicht, in Variable orderFound (true/false) ausgeben.
+
+Bestelldaten:
+- Bestellnummer (orderNr)
+- Bestellungsbetrag (orderAmount)
+- Kostenstellenleiter-Kürzel (costCenterMgr)
+
+Lieferantendaten:
+- Anzahl bisheriger Bestellungen (creditorOrderCount)
+- Anzahl Rechnungsreklamationen (creditorInvoiceReclamationCount)</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="creditorInvoiceReclamationCount">${1}</camunda:outputParameter>
+          <camunda:outputParameter name="creditorOrderCount">${6}</camunda:outputParameter>
+          <camunda:outputParameter name="orderFound">${true}</camunda:outputParameter>
+          <camunda:outputParameter name="orderAmount">${101}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1y33xl3</bpmn:incoming>
+      <bpmn:outgoing>Flow_0tbmtn1</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Activity_1k5dzl4" name="Ablehnungs-entscheid miteilen">
+      <bpmn:documentation>Wird umgesetzt mit einem per External Task Pattern eingebundenen Benachrichtungsservice. Hier wird die Kreditorenbuchhaltung per E-Mail benachrichtigt.</bpmn:documentation>
+      <bpmn:incoming>NegativSequenceFlow2</bpmn:incoming>
+      <bpmn:outgoing>Flow_0eafodb</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="RechnungMateriellAbgelehntEndEvent" name="Rechnung materiell abgelehnt">
+      <bpmn:incoming>Flow_0eafodb</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="RechnungZurZahlungFreigegebenEndEvent" name="Rechnung zur Zahlung freigegeben">
+      <bpmn:incoming>Flow_0hm1zxz</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="Activity_0qrzd9n" name="Freigabe-bestätigung senden">
+      <bpmn:documentation>Wird umgesetzt mit einem per External Task Pattern eingebundenen Benachrichtungsservice. Hier wird die Kreditorenbuchhaltung per E-Mail benachrichtigt.</bpmn:documentation>
+      <bpmn:incoming>Flow_1swl9v6</bpmn:incoming>
+      <bpmn:outgoing>Flow_0hm1zxz</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_10ld1xx">
+      <bpmn:incoming>NegativSequenceFlow</bpmn:incoming>
+      <bpmn:incoming>NeinSequenceFlow</bpmn:incoming>
+      <bpmn:outgoing>Flow_1cneye0</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_1jw4fx0">
+      <bpmn:incoming>PositivSequenceFlow2</bpmn:incoming>
+      <bpmn:incoming>CHF100SequenceFlow1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1yye4ye</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="RechnungInERPZurBezahlungErfassenTask" name="Rechnung in ERP zur Bezahlung erfassen">
+      <bpmn:documentation>In Realität natürlich deutlich komplexer, vor allem dann, wenn keine zugehörige Bestellung vorhanden ist. Wir begnügen uns mit folgender Variante:
 
 
-Das Prüfergebnis (positiv oder negativ) wird in der Variable materialCheckResult (true/false) gespeichert. Zudem wird in der Variable materialCheckComments eine Begründung beschrieben, was nicht in Ordnung sei.</bpmn:documentation>
+1. Über die ERP-API wird nach einem Lieferant mit der Bezeichnung creditorName gesucht. Zurück kommt die Lieferanten-Id creditorId oder die Meldung, dass kein Lieferant gefunden wurde. Letzteren Fall ignorieren wir -&gt; Exception werfen.
+
+
+2. Wir übergeben der ERP-API eine neue Rechnung mit den Angaben creditorId, invoiceNr, invoiceAmount, invoiceDate.
+
+
+3. Als Antwort erhalten wir eine Erfolgsbestätigung oder Fehlermeldung. Den zweiten Fall ignorieren wir -&gt; Exception werfen.</bpmn:documentation>
+      <bpmn:incoming>Flow_1yye4ye</bpmn:incoming>
+      <bpmn:outgoing>Flow_1swl9v6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="MateriellesPrufergebnisGateway" name="Materielles Prüfergebnis?">
+      <bpmn:incoming>Flow_1hegwq0</bpmn:incoming>
+      <bpmn:outgoing>NegativSequenceFlow2</bpmn:outgoing>
+      <bpmn:outgoing>PositivSequenceFlow2</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="RechnungFormalAbgelehntEndEvent" name="Rechnung&#10;formal&#10;abgelehnt">
+      <bpmn:incoming>NegativSequenceFlow1</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="Gateway_1iqzvbr">
+      <bpmn:incoming>PositivSequenceFlow</bpmn:incoming>
+      <bpmn:incoming>PositivSequenceFlow1</bpmn:incoming>
+      <bpmn:outgoing>Flow_0bzaplc</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="GesamtBetragGateway" name="Rechnungs-&#10;betrag?">
+      <bpmn:incoming>Flow_0bzaplc</bpmn:incoming>
+      <bpmn:outgoing>CHF100SequenceFlow</bpmn:outgoing>
+      <bpmn:outgoing>CHF100SequenceFlow1</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="FormalesPrufergebnisGateway" name="Formales Prüfergebnis?">
+      <bpmn:incoming>Flow_00p9c7f</bpmn:incoming>
+      <bpmn:outgoing>PositivSequenceFlow</bpmn:outgoing>
+      <bpmn:outgoing>NegativSequenceFlow1</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="AutomatischesPrufergebnisGateway" name="Automatisches Prüfergebnis?">
+      <bpmn:incoming>Flow_13frkl1</bpmn:incoming>
+      <bpmn:outgoing>NegativSequenceFlow</bpmn:outgoing>
+      <bpmn:outgoing>PositivSequenceFlow1</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="ZugehorigeBestellungGefundenGateway" name="Zugehörige Bestellung gefunden?">
+      <bpmn:incoming>Flow_0tbmtn1</bpmn:incoming>
+      <bpmn:outgoing>JaSequenceFlow</bpmn:outgoing>
+      <bpmn:outgoing>NeinSequenceFlow</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:startEvent id="RechnungErfasstStartEvent" name="Rechnung erfasst" camunda:asyncAfter="true">
+      <bpmn:documentation>Rechnungsdaten:
+- Rechnungsnummer (invoiceNr)
+- Rechnungsdatum (invoiceDate)
+- Fälligkeitsdatum (dueDate)
+- Lieferantenbezeichnung (creditorName)
+- Referenznummer (referenceNr)
+- Rechnungsbetrag (invoiceAmount)
+
+PDF per FileUpload (invoiceFile)</bpmn:documentation>
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="materialCheckResult" label="Prüfergebnis" type="boolean" />
-          <camunda:formField id="materialCheckComments" label="Begründung" type="string" />
+          <camunda:formField id="invoiceNr" label="Rechnungsnummer" type="long" />
+          <camunda:formField id="invoiceDate" label="Rechnungsdatum" type="date" />
+          <camunda:formField id="dueDate" label="Fälligkeitsdatum" type="date" />
+          <camunda:formField id="creditorName" label="Lieferantenbezeichnung" type="string" />
+          <camunda:formField id="referenceNr" label="Referenznummer" type="long" />
+          <camunda:formField id="invoiceAmount" label="Rechnungsbetrag" type="long" />
         </camunda:formData>
       </bpmn:extensionElements>
-      <bpmn:incoming>CHF100SequenceFlow</bpmn:incoming>
-      <bpmn:outgoing>Flow_1hegwq0</bpmn:outgoing>
-    </bpmn:userTask>
+      <bpmn:outgoing>Flow_1y33xl3</bpmn:outgoing>
+    </bpmn:startEvent>
   </bpmn:process>
   <bpmn:process id="Process_161542n" isExecutable="false">
     <bpmn:laneSet id="LaneSet_147l1z9">
@@ -787,14 +785,14 @@ Das Prüfergebnis (positiv oder negativ) wird in der Variable materialCheckResul
       <bpmndi:BPMNShape id="Activity_0fb2ciu_di" bpmnElement="DatenVonZugehorigerBestellungAuslesenTask">
         <dc:Bounds x="470" y="790" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0qfvl31_di" bpmnElement="RechnungAutomatischFormellPrufenTask">
-        <dc:Bounds x="730" y="790" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0hfk4mn_di" bpmnElement="RechnungFormellPrufenTask">
         <dc:Bounds x="990" y="1070" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1uwps0c_di" bpmnElement="RechnungMateriellPrufenTask">
         <dc:Bounds x="1490" y="630" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_02dfc81_di" bpmnElement="RechnungAutomatischFormellPrufenTask">
+        <dc:Bounds x="730" y="790" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Participant_0guif6x_di" bpmnElement="ERPParticipant" isHorizontal="true">
         <dc:Bounds x="280" y="372" width="300" height="60" />

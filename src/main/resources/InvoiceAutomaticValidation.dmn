@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" id="Definitions_168a1sr" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="4.3.0">
+  <decision id="InvoiceAutomaticValidation" name="Rechnungen automatisch prüfen">
+    <informationRequirement id="InformationRequirement_1cubu13">
+      <requiredInput href="#InputData_1ak4clk" />
+    </informationRequirement>
+    <informationRequirement id="InformationRequirement_0krdxp0">
+      <requiredInput href="#InputData_1v5hxk6" />
+    </informationRequirement>
+    <informationRequirement id="InformationRequirement_0vxs9cj">
+      <requiredInput href="#InputData_1o5xdtd" />
+    </informationRequirement>
+    <informationRequirement id="InformationRequirement_1a7mbhu">
+      <requiredInput href="#InputData_1ppdhil" />
+    </informationRequirement>
+    <decisionTable id="DecisionTable_0j2w7ef" hitPolicy="FIRST">
+      <input id="Input_1" label="Rechnungsbetrag">
+        <inputExpression id="InputExpression_1" typeRef="long">
+          <text>invoiceAmount</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_07s25hx" label="Anzahl Bestellungen">
+        <inputExpression id="LiteralExpression_0r0xyzx" typeRef="integer">
+          <text>creditorOrderCount</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_08j1hzt" label="Anzahl Reklamationen">
+        <inputExpression id="LiteralExpression_10hmood" typeRef="integer">
+          <text>creditorInvoiceReclamationCount</text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" label="Prüfergebnis positiv?" name="formalCheckResult" typeRef="boolean" />
+      <rule id="DecisionRule_1ynwsof">
+        <description>Rechnungen, deren Betrag nicht mit dem Bestellbetrag übereinstimmt sollen gändisch geprüft werden</description>
+        <inputEntry id="UnaryTests_1lgfbr8">
+          <text>not(orderAmount)</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0kiy0ih">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0wm3slb">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1e3wtw3">
+          <text>false</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0zajr69">
+        <description>Rechnungen mit einem Betrag &gt; CHF 10'000.- sollen händisch geprüft werden</description>
+        <inputEntry id="UnaryTests_1waky9h">
+          <text>&gt; 10000</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0dad8b7">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_06so2bp">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_12sqa4t">
+          <text>false</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0gkmlos">
+        <description>Falls mehr als eine Reklamation vom Lieferanten, dann händisch prüfen</description>
+        <inputEntry id="UnaryTests_051vfg7">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1qw67b4">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_12zypq0">
+          <text>&gt; 1</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_033csrk">
+          <text>false</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_16f9cvy">
+        <description>Wenn Rechnung CHF 1'000 bis und mit 10'000 und weniger als 10 Bestellungen, dann händisch prüfen</description>
+        <inputEntry id="UnaryTests_1786dw1">
+          <text>[1000..10000]</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0wucdkf">
+          <text>&lt; 10</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1qpa0iq">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_02mfvzf">
+          <text>false</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_19zibrf">
+        <description>Wenn Rechnung CHF 1'000 bis und mit 10'000 und mind. 10 Bestellungen, dann automatisch positiv</description>
+        <inputEntry id="UnaryTests_15754xg">
+          <text>[1000..10000]</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_09mgjgd">
+          <text>&gt;= 10</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0brvx2x">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0j5nzqi">
+          <text>true</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_12nqvdo">
+        <description>Wenn Rechnung grösser CHF 100 und kleiner CHF 1000 und weniger als 5 Bestellungen, dann händisch prüfen</description>
+        <inputEntry id="UnaryTests_0es3yw3">
+          <text>]100..1000[</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_09znhpt">
+          <text>&lt; 5</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1topd7e">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1weadi7">
+          <text>false</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1dttbu3">
+        <description>Wenn Rechnung grösser CHF 100 und kleiner CHF 1000 und mindestens 5 Bestellungen, dann positiv</description>
+        <inputEntry id="UnaryTests_1fjnsgf">
+          <text>]100..1000[</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1srnnt2">
+          <text>&gt;= 5</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0mfcwip">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0psygs3">
+          <text>true</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_08xo01p">
+        <description>Wenn Rechnung max. CHF 100, dann positiv</description>
+        <inputEntry id="UnaryTests_13czcwy">
+          <text>&lt;= 100</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0j1ops7">
+          <text></text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1wvu8qq">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1omzeq1">
+          <text>true</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <inputData id="InputData_1ak4clk" name="Anzahl Bestellungen" />
+  <inputData id="InputData_1v5hxk6" name="Rechnungsbetrag" />
+  <inputData id="InputData_1o5xdtd" name="Bestellbetrag" />
+  <inputData id="InputData_1ppdhil" name="Anzahl Reklamationen" />
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="InvoiceAutomaticValidation">
+        <dc:Bounds height="80" width="180" x="440" y="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_0ul4w62" dmnElementRef="InputData_1ak4clk">
+        <dc:Bounds height="45" width="125" x="157" y="298" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_157yhdu" dmnElementRef="InputData_1v5hxk6">
+        <dc:Bounds height="45" width="125" x="357" y="298" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_1hsqr8r" dmnElementRef="InputData_1o5xdtd">
+        <dc:Bounds height="45" width="125" x="557" y="298" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_0zgqxg5" dmnElementRef="InputData_1ppdhil">
+        <dc:Bounds height="45" width="125" x="757" y="298" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_08kefqk" dmnElementRef="InformationRequirement_1cubu13">
+        <di:waypoint x="220" y="298" />
+        <di:waypoint x="476" y="180" />
+        <di:waypoint x="476" y="160" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="DMNEdge_0ucjcke" dmnElementRef="InformationRequirement_0krdxp0">
+        <di:waypoint x="420" y="298" />
+        <di:waypoint x="512" y="180" />
+        <di:waypoint x="512" y="160" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="DMNEdge_02nfirk" dmnElementRef="InformationRequirement_0vxs9cj">
+        <di:waypoint x="620" y="298" />
+        <di:waypoint x="548" y="180" />
+        <di:waypoint x="548" y="160" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="DMNEdge_1dfeyzt" dmnElementRef="InformationRequirement_1a7mbhu">
+        <di:waypoint x="820" y="298" />
+        <di:waypoint x="584" y="180" />
+        <di:waypoint x="584" y="160" />
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
